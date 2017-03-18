@@ -1,0 +1,76 @@
+/*
+ * Copyright (c) 2017 Michael Schoene.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+buildscript {
+	ext {
+		springBootVersion = '1.5.2.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+
+jar {
+	baseName = 'onewire'
+	version = '0.0.1-SNAPSHOT'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+compileJava {
+	options.encoding = "UTF-8"
+}
+
+compileTestJava {
+	options.encoding = "UTF-8"
+}
+
+javadoc {
+	options {
+		encoding = "utf-8"
+		charSet = "utf-8"
+		docEncoding = "utf-8"
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.owfs:jowfsclient:1.2.6')
+
+	runtime('mysql:mysql-connector-java')
+
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '3.4'
+}
