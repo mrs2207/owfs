@@ -25,6 +25,8 @@ import java.sql.Timestamp;
 @Entity
 @Cacheable
 public class SensorValue {
+    @Id
+    private Long id;
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY,optional = false)
     private Sensor sensor;

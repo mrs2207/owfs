@@ -17,60 +17,95 @@
  */
 
 buildscript {
-	ext {
-		springBootVersion = '1.5.2.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
+    ext {
+        springBootVersion = '1.5.2.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+
+        classpath "io.github.divinespear:jpa-schema-gradle-plugin:0.2.1-1"
+        classpath "mysql:mysql-connector-java:5.1.41"
+        classpath "com.h2database:h2:1.4.193"
+    }
 }
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'jpa-schema-generate'
 
 jar {
-	baseName = 'onewire'
-	version = '0.0.1-SNAPSHOT'
+    baseName = 'onewire'
+    version = '0.0.1-SNAPSHOT'
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 compileJava {
-	options.encoding = "UTF-8"
+    options.encoding = "UTF-8"
 }
 
 compileTestJava {
-	options.encoding = "UTF-8"
+    options.encoding = "UTF-8"
 }
 
 javadoc {
-	options {
-		encoding = "utf-8"
-		charSet = "utf-8"
-		docEncoding = "utf-8"
-	}
+    options {
+        encoding = "utf-8"
+        charSet = "utf-8"
+        docEncoding = "utf-8"
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
+generateSchema {
+    databaseAction = "none"
+    scriptAction = "create"
+    format = true
+    vendor = "hibernate"
+    packageToScan = ["de.jgard.onewire.model"]
+    outputDirectory = new File("${projectDir}/src/main/scripts/sql")
+
+    targets {
+        schemaMySQL {
+            databaseProductName = "MySQL"
+            databaseMajorVersion = 5
+            databaseMinorVersion = 6
+            createOutputFileName = "create_schema_mysql.sql"
+            properties = [
+                    'hibernate.dialect': 'org.hibernate.dialect.MySQL5InnoDBDialect'
+            ]
+        }
+        schemaH2 {
+            databaseProductName = "H2"
+            databaseMajorVersion = 1
+            databaseMinorVersion = 4
+            createOutputFileName = "create_schema_h2.sql"
+            properties = [
+                    'hibernate.dialect': 'org.hibernate.dialect.H2Dialect'
+            ]
+        }
+    }
+}
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile('org.springframework.boot:spring-boot-starter-web')
-	compile('org.owfs:jowfsclient:1.2.6')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.owfs:jowfsclient:1.2.6')
 
-	runtime('mysql:mysql-connector-java')
+    runtime('mysql:mysql-connector-java')
+    runtime('com.h2database:h2')
 
-	testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '3.4'
+    gradleVersion = '3.4'
 }
