@@ -18,10 +18,8 @@
 
 package de.jgard.onewire.device;
 
-import org.owfs.jowfsclient.OwfsConnection;
-
 public interface OneWireSensorDevice {
-    boolean readSensorValues(OwfsConnection owfsConnection);
+    boolean readSensorValues(OneWireServer oneWireServer);
 
-    boolean readUncachedSensorValues(OwfsConnection owfsConnection);
+    boolean readUncachedSensorValues(OneWireServer oneWireServer);
 }

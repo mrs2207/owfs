@@ -19,10 +19,6 @@
 package de.jgard.onewire.device;
 
 import de.jgard.onewire.OneWireException;
-import org.owfs.jowfsclient.OwfsConnection;
-import org.owfs.jowfsclient.OwfsException;
-
-import java.io.IOException;
 
 public class OneWireDS2423Device extends OneWireUniversalDevice implements BiCounterDevice {
     protected static final String PATH_COUNTER_A = "/counters.A";
@@ -37,13 +33,15 @@ public class OneWireDS2423Device extends OneWireUniversalDevice implements BiCou
     }
 
     @Override
-    public boolean readSensorValues(OwfsConnection owfsConnection) {
-        return readSensorValuesWithLimitedRate(() -> readSensorValues(owfsConnection, getBasePath()));
+    public boolean readSensorValues(OneWireServer oneWireServer) throws OneWireException {
+        return readSensorValuesWithLimitedRate(
+                () -> readSensorValues(oneWireServer, getBasePath()));
     }
 
     @Override
-    public boolean readUncachedSensorValues(OwfsConnection owfsConnection) {
-        return readSensorValuesWithLimitedRate(() -> readSensorValues(owfsConnection, PATH_UNCACHED + getBasePath()));
+    public boolean readUncachedSensorValues(OneWireServer oneWireServer) throws OneWireException {
+        return readSensorValuesWithLimitedRate(
+                () -> readSensorValues(oneWireServer, PATH_UNCACHED + getBasePath()));
     }
 
     @Override
@@ -56,20 +54,18 @@ public class OneWireDS2423Device extends OneWireUniversalDevice implements BiCou
         return counterB;
     }
 
-    private void readSensorValues(OwfsConnection owfsConnection, String path) {
+    private void readSensorValues(OneWireServer oneWireServer, String path) throws OneWireException {
         try {
-            counterA = Long.parseLong(owfsConnection.read((path + PATH_COUNTER_A).trim()));
-            counterB = Long.parseLong(owfsConnection.read((path + PATH_COUNTER_B).trim()));
-        } catch (IOException | OwfsException e) {
-            throw new OneWireException("Can't read sensor values.", e);
+            counterA = Long.parseLong(oneWireServer.read((path + PATH_COUNTER_A).trim()));
+            counterB = Long.parseLong(oneWireServer.read((path + PATH_COUNTER_B).trim()));
         } catch (NumberFormatException e) {
             throw new OneWireException("Sensor values doesn't have expected format (long).", e);
         }
     }
 
     @Override
-    void readBaseParameter(OwfsConnection owfsConnection) {
-        super.readBaseParameter(owfsConnection);
+    void readBaseParameter(OneWireServer oneWireServer) throws OneWireException {
+        super.readBaseParameter(oneWireServer);
 
         if (!ONE_WIRE_FAMILY.equals(getFamily()))
             throw new OneWireException(

@@ -20,7 +20,6 @@ package de.jgard.onewire.device;
 
 import de.jgard.onewire.OneWireException;
 import de.jgard.onewire.util.LimitedRateExecutor;
-import org.owfs.jowfsclient.OwfsConnection;
 import org.owfs.jowfsclient.OwfsException;
 
 import java.io.IOException;
@@ -98,17 +97,13 @@ public class OneWireUniversalDevice {
         return basePath;
     }
 
-    void readBaseParameter(OwfsConnection owfsConnection) throws OneWireException {
-        try {
-            address = owfsConnection.read(basePath + PATH_ADDRESS);
-            crc8 = owfsConnection.read(basePath + PATH_CRC8);
-            family = owfsConnection.read(basePath + PATH_FAMILY);
-            id = owfsConnection.read(basePath + PATH_ID);
-            locator = owfsConnection.read(basePath + PATH_LOCATOR);
-            present = owfsConnection.read(basePath + PATH_PRESENT);
-            type = owfsConnection.read(basePath + PATH_TYPE);
-        } catch (IOException | OwfsException e) {
-            throw new OneWireException("Can't read device parameter for path '" + basePath + "'.", e);
-        }
+    void readBaseParameter(OneWireServer oneWireServer) throws OneWireException {
+        address = oneWireServer.read(basePath + PATH_ADDRESS);
+        crc8 = oneWireServer.read(basePath + PATH_CRC8);
+        family = oneWireServer.read(basePath + PATH_FAMILY);
+        id = oneWireServer.read(basePath + PATH_ID);
+        locator = oneWireServer.read(basePath + PATH_LOCATOR);
+        present = oneWireServer.read(basePath + PATH_PRESENT);
+        type = oneWireServer.read(basePath + PATH_TYPE);
     }
 }

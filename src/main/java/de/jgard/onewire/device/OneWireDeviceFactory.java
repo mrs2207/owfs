@@ -19,31 +19,30 @@
 package de.jgard.onewire.device;
 
 import de.jgard.onewire.OneWireException;
-import org.owfs.jowfsclient.OwfsConnection;
 import org.springframework.stereotype.Service;
 
 @Service
 public class OneWireDeviceFactory {
-    public BiCounterDevice getBiCounterDevice(OwfsConnection owfsConnection, String basePath) {
-        OneWireUniversalDevice oneWireDevice = getOneWireUniversalDevice(owfsConnection, basePath);
+    public BiCounterDevice getBiCounterDevice(OneWireServer oneWireServer, String basePath) {
+        OneWireUniversalDevice oneWireDevice = getOneWireUniversalDevice(oneWireServer, basePath);
 
         if (isDS2423(oneWireDevice)) {
-            return getOneWireDS2423Device(owfsConnection, basePath);
+            return getOneWireDS2423Device(oneWireServer, basePath);
         }
 
         throw new OneWireException(
                 "1wire device for path '" + basePath + "' has unknown type (" + oneWireDevice.getType() + ").");
     }
 
-    private OneWireUniversalDevice getOneWireUniversalDevice(OwfsConnection owfsConnection, String basePath) {
+    private OneWireUniversalDevice getOneWireUniversalDevice(OneWireServer oneWireServer, String basePath) {
         OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(basePath);
-        oneWireDevice.readBaseParameter(owfsConnection);
+        oneWireDevice.readBaseParameter(oneWireServer);
         return oneWireDevice;
     }
 
-    private BiCounterDevice getOneWireDS2423Device(OwfsConnection owfsConnection, String basePath) {
+    private BiCounterDevice getOneWireDS2423Device(OneWireServer oneWireServer, String basePath) {
         OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(basePath);
-        oneWireDS2423Device.readBaseParameter(owfsConnection);
+        oneWireDS2423Device.readBaseParameter(oneWireServer);
 
         return oneWireDS2423Device;
     }

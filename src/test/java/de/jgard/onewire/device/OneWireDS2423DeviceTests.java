@@ -21,7 +21,6 @@ package de.jgard.onewire.device;
 import de.jgard.onewire.OneWireException;
 import org.junit.Before;
 import org.junit.Test;
-import org.owfs.jowfsclient.OwfsConnection;
 import org.owfs.jowfsclient.OwfsException;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -32,20 +31,20 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class OneWireDS2423DeviceTests {
     private static final String BASEPATH = "/1D.AA5D0B000000";
-    private OwfsConnection owfsConnection;
+    private OneWireServer oneWireServer;
 
     @Before
     public void setup() {
-        owfsConnection = mock(OwfsConnection.class);
+        oneWireServer = mock(OneWireServer.class);
     }
 
     @Test
     public void readBaseParameter() throws Exception {
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_FAMILY)).thenReturn("1D");
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_TYPE)).thenReturn("DS2423");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_FAMILY)).thenReturn("1D");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_TYPE)).thenReturn("DS2423");
 
         OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH);
-        oneWireDS2423Device.readBaseParameter(owfsConnection);
+        oneWireDS2423Device.readBaseParameter(oneWireServer);
 
         assertThat(oneWireDS2423Device.getFamily()).isEqualTo("1D");
         assertThat(oneWireDS2423Device.getType()).isEqualTo("DS2423");
@@ -53,29 +52,29 @@ public class OneWireDS2423DeviceTests {
 
     @Test(expected = OneWireException.class)
     public void readBaseParameterWrongFamily() throws Exception {
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_FAMILY)).thenReturn("1F");
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_TYPE)).thenReturn("DS2423");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_FAMILY)).thenReturn("1F");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_TYPE)).thenReturn("DS2423");
 
         OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH);
-        oneWireDS2423Device.readBaseParameter(owfsConnection);
+        oneWireDS2423Device.readBaseParameter(oneWireServer);
     }
 
     @Test(expected = OneWireException.class)
     public void readBaseParameterWrongType() throws Exception {
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_FAMILY)).thenReturn("1D");
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_TYPE)).thenReturn("DS2422");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_FAMILY)).thenReturn("1D");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_TYPE)).thenReturn("DS2422");
 
         OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH);
-        oneWireDS2423Device.readBaseParameter(owfsConnection);
+        oneWireDS2423Device.readBaseParameter(oneWireServer);
     }
 
     @Test
     public void readSensorValues() throws Exception {
-        when(owfsConnection.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A)).thenReturn("42");
-        when(owfsConnection.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_B)).thenReturn("21");
+        when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A)).thenReturn("42");
+        when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_B)).thenReturn("21");
 
         OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH);
-        boolean valuesRead = oneWireDS2423Device.readSensorValues(owfsConnection);
+        boolean valuesRead = oneWireDS2423Device.readSensorValues(oneWireServer);
 
         assertThat(valuesRead).isTrue();
         assertThat(oneWireDS2423Device.getCounterA()).isEqualTo(42L);
@@ -84,38 +83,38 @@ public class OneWireDS2423DeviceTests {
 
     @Test(expected = OneWireException.class)
     public void readSensorValuesInvalidValue() throws Exception {
-        when(owfsConnection.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A)).thenReturn("42x");
-        when(owfsConnection.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_B)).thenReturn("21x");
+        when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A)).thenReturn("42x");
+        when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_B)).thenReturn("21x");
 
         OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH);
-        oneWireDS2423Device.readSensorValues(owfsConnection);
+        oneWireDS2423Device.readSensorValues(oneWireServer);
     }
 
     @Test(expected = OneWireException.class)
     public void readSensorValuesReadError() throws Exception {
-        when(owfsConnection.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A))
-                .thenThrow(new OwfsException("error", 1));
+        when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A))
+                .thenThrow(new OneWireException("error"));
 
         OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH);
-        oneWireDS2423Device.readSensorValues(owfsConnection);
+        oneWireDS2423Device.readSensorValues(oneWireServer);
     }
 
     @Test
     public void readSensorValuesToFast() throws Exception {
-        when(owfsConnection.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A)).thenReturn("42");
-        when(owfsConnection.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_B)).thenReturn("21");
+        when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A)).thenReturn("42");
+        when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_B)).thenReturn("21");
 
         OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH);
-        boolean valuesRead = oneWireDS2423Device.readSensorValues(owfsConnection);
+        boolean valuesRead = oneWireDS2423Device.readSensorValues(oneWireServer);
 
         assertThat(valuesRead).isTrue();
         assertThat(oneWireDS2423Device.getCounterA()).isEqualTo(42L);
         assertThat(oneWireDS2423Device.getCounterB()).isEqualTo(21L);
 
-        when(owfsConnection.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A)).thenReturn("43");
-        when(owfsConnection.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_B)).thenReturn("22");
+        when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A)).thenReturn("43");
+        when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_B)).thenReturn("22");
 
-        valuesRead = oneWireDS2423Device.readSensorValues(owfsConnection);
+        valuesRead = oneWireDS2423Device.readSensorValues(oneWireServer);
 
         assertThat(valuesRead).isFalse();
         assertThat(oneWireDS2423Device.getCounterA()).isEqualTo(42L);
@@ -124,21 +123,21 @@ public class OneWireDS2423DeviceTests {
 
     @Test
     public void readSensorValuesWithMaximumRate() throws Exception {
-        when(owfsConnection.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A)).thenReturn("42");
-        when(owfsConnection.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_B)).thenReturn("21");
+        when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A)).thenReturn("42");
+        when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_B)).thenReturn("21");
 
         OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH);
-        boolean valuesRead = oneWireDS2423Device.readSensorValues(owfsConnection);
+        boolean valuesRead = oneWireDS2423Device.readSensorValues(oneWireServer);
 
         assertThat(valuesRead).isTrue();
         assertThat(oneWireDS2423Device.getCounterA()).isEqualTo(42L);
         assertThat(oneWireDS2423Device.getCounterB()).isEqualTo(21L);
 
-        when(owfsConnection.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A)).thenReturn("43");
-        when(owfsConnection.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_B)).thenReturn("22");
+        when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A)).thenReturn("43");
+        when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_B)).thenReturn("22");
 
         Thread.sleep(OneWireUniversalDevice.MINIMAL_READ_SENSOR_VALUES_INTERVAL);
-        valuesRead = oneWireDS2423Device.readSensorValues(owfsConnection);
+        valuesRead = oneWireDS2423Device.readSensorValues(oneWireServer);
 
         assertThat(valuesRead).isTrue();
         assertThat(oneWireDS2423Device.getCounterA()).isEqualTo(43L);
@@ -147,13 +146,13 @@ public class OneWireDS2423DeviceTests {
 
     @Test
     public void readUncachedSensorValues() throws Exception {
-        when(owfsConnection.read(OneWireUniversalDevice.PATH_UNCACHED + BASEPATH + OneWireDS2423Device.PATH_COUNTER_A))
+        when(oneWireServer.read(OneWireUniversalDevice.PATH_UNCACHED + BASEPATH + OneWireDS2423Device.PATH_COUNTER_A))
                 .thenReturn("42");
-        when(owfsConnection.read(OneWireUniversalDevice.PATH_UNCACHED + BASEPATH + OneWireDS2423Device.PATH_COUNTER_B))
+        when(oneWireServer.read(OneWireUniversalDevice.PATH_UNCACHED + BASEPATH + OneWireDS2423Device.PATH_COUNTER_B))
                 .thenReturn("21");
 
         OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH);
-        boolean valuesRead = oneWireDS2423Device.readUncachedSensorValues(owfsConnection);
+        boolean valuesRead = oneWireDS2423Device.readUncachedSensorValues(oneWireServer);
 
         assertThat(valuesRead).isTrue();
         assertThat(oneWireDS2423Device.getCounterA()).isEqualTo(42L);

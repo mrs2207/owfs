@@ -19,8 +19,8 @@
 package de.jgard.onewire.device;
 
 import de.jgard.onewire.OneWireException;
+import org.junit.Before;
 import org.junit.Test;
-import org.owfs.jowfsclient.OwfsConnection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -28,51 +28,50 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class OneWireDeviceFactoryTest {
+    private final static String BASE_PATH = "/1D.AA5D0B000000";
+
+    private OneWireDeviceFactory oneWireDeviceFactory;
+    private OneWireServer oneWireServer;
+
+    @Before
+    public void setup() {
+        oneWireDeviceFactory = new OneWireDeviceFactory();
+        oneWireServer = mock(OneWireServer.class);
+    }
+
     @Test
     public void getBiCounterDevice() throws Exception {
-        OneWireDeviceFactory oneWireDeviceFactory = new OneWireDeviceFactory();
-        OwfsConnection owfsConnection = mock(OwfsConnection.class);
-        String basePath = "/1D.AA5D0B000000";
+        when(oneWireServer.read(BASE_PATH + OneWireUniversalDevice.PATH_TYPE))
+                .thenReturn(OneWireDS2423Device.ONE_WIRE_TYPE);
+        when(oneWireServer.read(BASE_PATH + OneWireUniversalDevice.PATH_FAMILY))
+                .thenReturn(OneWireDS2423Device.ONE_WIRE_FAMILY);
 
-        when(owfsConnection.read(basePath + OneWireUniversalDevice.PATH_TYPE)).thenReturn(OneWireDS2423Device.ONE_WIRE_TYPE);
-        when(owfsConnection.read(basePath + OneWireUniversalDevice.PATH_FAMILY)).thenReturn(OneWireDS2423Device.ONE_WIRE_FAMILY);
-
-        BiCounterDevice biCounterDevice = oneWireDeviceFactory.getBiCounterDevice(owfsConnection, basePath );
+        BiCounterDevice biCounterDevice = oneWireDeviceFactory.getBiCounterDevice(oneWireServer, BASE_PATH);
         assertThat(biCounterDevice).isNotNull();
     }
 
     @Test(expected = OneWireException.class)
     public void getBiCounterDeviceWrongType() throws Exception {
-        OneWireDeviceFactory oneWireDeviceFactory = new OneWireDeviceFactory();
-        OwfsConnection owfsConnection = mock(OwfsConnection.class);
-        String basePath = "/1D.AA5D0B000000";
+        when(oneWireServer.read(BASE_PATH + OneWireUniversalDevice.PATH_TYPE)).thenReturn("DS4242");
+        when(oneWireServer.read(BASE_PATH + OneWireUniversalDevice.PATH_FAMILY))
+                .thenReturn(OneWireDS2423Device.ONE_WIRE_FAMILY);
 
-        when(owfsConnection.read(basePath + OneWireUniversalDevice.PATH_TYPE)).thenReturn("DS4242");
-        when(owfsConnection.read(basePath + OneWireUniversalDevice.PATH_FAMILY)).thenReturn(OneWireDS2423Device.ONE_WIRE_FAMILY);
-
-        oneWireDeviceFactory.getBiCounterDevice(owfsConnection, basePath );
+        oneWireDeviceFactory.getBiCounterDevice(oneWireServer, BASE_PATH);
     }
 
     @Test(expected = OneWireException.class)
     public void getBiCounterDeviceWrongFamily() throws Exception {
-        OneWireDeviceFactory oneWireDeviceFactory = new OneWireDeviceFactory();
-        OwfsConnection owfsConnection = mock(OwfsConnection.class);
-        String basePath = "/1D.AA5D0B000000";
+        when(oneWireServer.read(BASE_PATH + OneWireUniversalDevice.PATH_TYPE))
+                .thenReturn(OneWireDS2423Device.ONE_WIRE_TYPE);
+        when(oneWireServer.read(BASE_PATH + OneWireUniversalDevice.PATH_FAMILY)).thenReturn("42");
 
-        when(owfsConnection.read(basePath + OneWireUniversalDevice.PATH_TYPE)).thenReturn(OneWireDS2423Device.ONE_WIRE_TYPE);
-        when(owfsConnection.read(basePath + OneWireUniversalDevice.PATH_FAMILY)).thenReturn("42");
-
-        oneWireDeviceFactory.getBiCounterDevice(owfsConnection, basePath );
+        oneWireDeviceFactory.getBiCounterDevice(oneWireServer, BASE_PATH);
     }
 
     @Test(expected = OneWireException.class)
     public void getBiCounterDeviceUnkownPath() throws Exception {
-        OneWireDeviceFactory oneWireDeviceFactory = new OneWireDeviceFactory();
-        OwfsConnection owfsConnection = mock(OwfsConnection.class);
-        String basePath = "/1D.AA5D0B000000";
+        when(oneWireServer.read(any())).thenThrow(new OneWireException("error"));
 
-        when(owfsConnection.read(any())).thenThrow(new OneWireException("error"));
-
-        oneWireDeviceFactory.getBiCounterDevice(owfsConnection, basePath );
+        oneWireDeviceFactory.getBiCounterDevice(oneWireServer, BASE_PATH);
     }
 }

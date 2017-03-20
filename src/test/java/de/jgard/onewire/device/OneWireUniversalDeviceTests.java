@@ -37,18 +37,18 @@ public class OneWireUniversalDeviceTests {
 
     @Test
     public void readBaseParameter() throws Exception {
-        OwfsConnection owfsConnection = mock(OwfsConnection.class);
+        OneWireServer oneWireServer = mock(OneWireServer.class);
 
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_ADDRESS)).thenReturn("1DAA5D0B000000BD");
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_CRC8)).thenReturn("BD");
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_FAMILY)).thenReturn("1D");
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_ID)).thenReturn("AA5D0B000000");
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_LOCATOR)).thenReturn("FF08FFFFFFFFFFFF");
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_PRESENT)).thenReturn("1");
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_TYPE)).thenReturn("DS2423");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_ADDRESS)).thenReturn("1DAA5D0B000000BD");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_CRC8)).thenReturn("BD");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_FAMILY)).thenReturn("1D");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_ID)).thenReturn("AA5D0B000000");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_LOCATOR)).thenReturn("FF08FFFFFFFFFFFF");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_PRESENT)).thenReturn("1");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_TYPE)).thenReturn("DS2423");
 
         OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(BASEPATH);
-        oneWireDevice.readBaseParameter(owfsConnection);
+        oneWireDevice.readBaseParameter(oneWireServer);
 
         assertThat(oneWireDevice.getAddress()).isEqualTo("1DAA5D0B000000BD");
         assertThat(oneWireDevice.getCrc8()).isEqualTo("BD");
@@ -61,12 +61,12 @@ public class OneWireUniversalDeviceTests {
 
     @Test(expected = OneWireException.class)
     public void readBaseParameterWithUnknownPath() throws Exception {
-        OwfsConnection owfsConnection = mock(OwfsConnection.class);
+        OneWireServer oneWireServer = mock(OneWireServer.class);
 
-        when(owfsConnection.read(any())).thenThrow(new OwfsException("error", 1));
+        when(oneWireServer.read(any())).thenThrow(new OneWireException("error"));
 
         OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(BASEPATH);
-        oneWireDevice.readBaseParameter(owfsConnection);
+        oneWireDevice.readBaseParameter(oneWireServer);
     }
 
     @Test
@@ -108,18 +108,18 @@ public class OneWireUniversalDeviceTests {
 
     @Test
     public void testToString() throws Exception {
-        OwfsConnection owfsConnection = mock(OwfsConnection.class);
+        OneWireServer oneWireServer = mock(OneWireServer.class);
 
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_ADDRESS)).thenReturn("1DAA5D0B000000BD");
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_CRC8)).thenReturn("BD");
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_FAMILY)).thenReturn("1D");
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_ID)).thenReturn("AA5D0B000000");
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_LOCATOR)).thenReturn("FF08FFFFFFFFFFFF");
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_PRESENT)).thenReturn("1");
-        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_TYPE)).thenReturn("DS2423");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_ADDRESS)).thenReturn("1DAA5D0B000000BD");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_CRC8)).thenReturn("BD");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_FAMILY)).thenReturn("1D");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_ID)).thenReturn("AA5D0B000000");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_LOCATOR)).thenReturn("FF08FFFFFFFFFFFF");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_PRESENT)).thenReturn("1");
+        when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_TYPE)).thenReturn("DS2423");
 
         OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(BASEPATH);
-        oneWireDevice.readBaseParameter(owfsConnection);
+        oneWireDevice.readBaseParameter(oneWireServer);
 
         String toString = oneWireDevice.toString();
         assertThat(toString).isEqualTo(
