@@ -24,44 +24,36 @@ import org.owfs.jowfsclient.OwfsException;
 
 import java.io.IOException;
 
-public class OneWireDeviceDS2423 extends OneWireDevice {
+public class OneWireDS2423Device extends OneWireUniversalDevice implements BiCounterDevice {
     protected static final String PATH_COUNTER_A = "/counters.A";
     protected static final String PATH_COUNTER_B = "/counters.B";
-    private static final String ONE_WIRE_FAMILY = "1D";
-    private static final String ONE_WIRE_TYPE = "DS2423";
+    static final String ONE_WIRE_FAMILY = "1D";
+    static final String ONE_WIRE_TYPE = "DS2423";
     private long counterA;
     private long counterB;
 
-    public OneWireDeviceDS2423(String basePath) {
+    OneWireDS2423Device(String basePath) {
         super(basePath);
     }
 
-    public void readBaseParameter(OwfsConnection owfsConnection) throws IOException, OwfsException {
-        super.readBaseParameter(owfsConnection);
-
-        if (!ONE_WIRE_FAMILY.equals(getFamily()))
-            throw new IllegalStateException(
-                    "Wrong family: expected: '" + ONE_WIRE_FAMILY + "'; received: '" + getFamily() + "'.");
-
-        if (!ONE_WIRE_TYPE.equals(getType()))
-            throw new IllegalStateException(
-                    "Wrong type: expected: '" + ONE_WIRE_TYPE + "'; received: '" + getType() + "'.");
-    }
-
+    @Override
     public boolean readSensorValues(OwfsConnection owfsConnection) {
-        boolean valuesRead = readSensorValuesWithLimitedRate(() -> {
-            readSensorValues(owfsConnection, getBasePath());
-        });
-
-        return valuesRead;
+        return readSensorValuesWithLimitedRate(() -> readSensorValues(owfsConnection, getBasePath()));
     }
 
+    @Override
     public boolean readUncachedSensorValues(OwfsConnection owfsConnection) {
-        boolean valuesRead = readSensorValuesWithLimitedRate(() -> {
-            readSensorValues(owfsConnection, PATH_UNCACHED + getBasePath());
-        });
+        return readSensorValuesWithLimitedRate(() -> readSensorValues(owfsConnection, PATH_UNCACHED + getBasePath()));
+    }
 
-        return valuesRead;
+    @Override
+    public long getCounterA() {
+        return counterA;
+    }
+
+    @Override
+    public long getCounterB() {
+        return counterB;
     }
 
     private void readSensorValues(OwfsConnection owfsConnection, String path) {
@@ -75,11 +67,16 @@ public class OneWireDeviceDS2423 extends OneWireDevice {
         }
     }
 
-    public long getCounterA() {
-        return counterA;
-    }
+    @Override
+    void readBaseParameter(OwfsConnection owfsConnection) {
+        super.readBaseParameter(owfsConnection);
 
-    public long getCounterB() {
-        return counterB;
+        if (!ONE_WIRE_FAMILY.equals(getFamily()))
+            throw new OneWireException(
+                    "Wrong family: expected: '" + ONE_WIRE_FAMILY + "'; received: '" + getFamily() + "'.");
+
+        if (!ONE_WIRE_TYPE.equals(getType()))
+            throw new OneWireException(
+                    "Wrong type: expected: '" + ONE_WIRE_TYPE + "'; received: '" + getType() + "'.");
     }
 }

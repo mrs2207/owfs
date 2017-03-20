@@ -18,16 +18,19 @@
 
 package de.jgard.onewire.device;
 
+import de.jgard.onewire.OneWireException;
 import org.junit.Test;
 import org.owfs.jowfsclient.OwfsConnection;
+import org.owfs.jowfsclient.OwfsException;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class OneWireDeviceTests {
+public class OneWireUniversalDeviceTests {
     private static final String BASEPATH = "/1D.AA5D0B000000";
 
     private boolean sensorValuesRead;
@@ -36,15 +39,15 @@ public class OneWireDeviceTests {
     public void readBaseParameter() throws Exception {
         OwfsConnection owfsConnection = mock(OwfsConnection.class);
 
-        when(owfsConnection.read(BASEPATH + OneWireDevice.PATH_ADDRESS)).thenReturn("1DAA5D0B000000BD");
-        when(owfsConnection.read(BASEPATH + OneWireDevice.PATH_CRC8)).thenReturn("BD");
-        when(owfsConnection.read(BASEPATH + OneWireDevice.PATH_FAMILY)).thenReturn("1D");
-        when(owfsConnection.read(BASEPATH + OneWireDevice.PATH_ID)).thenReturn("AA5D0B000000");
-        when(owfsConnection.read(BASEPATH + OneWireDevice.PATH_LOCATOR)).thenReturn("FF08FFFFFFFFFFFF");
-        when(owfsConnection.read(BASEPATH + OneWireDevice.PATH_PRESENT)).thenReturn("1");
-        when(owfsConnection.read(BASEPATH + OneWireDevice.PATH_TYPE)).thenReturn("DS2423");
+        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_ADDRESS)).thenReturn("1DAA5D0B000000BD");
+        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_CRC8)).thenReturn("BD");
+        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_FAMILY)).thenReturn("1D");
+        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_ID)).thenReturn("AA5D0B000000");
+        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_LOCATOR)).thenReturn("FF08FFFFFFFFFFFF");
+        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_PRESENT)).thenReturn("1");
+        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_TYPE)).thenReturn("DS2423");
 
-        OneWireDevice oneWireDevice = new OneWireDevice(BASEPATH);
+        OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(BASEPATH);
         oneWireDevice.readBaseParameter(owfsConnection);
 
         assertThat(oneWireDevice.getAddress()).isEqualTo("1DAA5D0B000000BD");
@@ -56,9 +59,19 @@ public class OneWireDeviceTests {
         assertThat(oneWireDevice.getType()).isEqualTo("DS2423");
     }
 
+    @Test(expected = OneWireException.class)
+    public void readBaseParameterWithUnknownPath() throws Exception {
+        OwfsConnection owfsConnection = mock(OwfsConnection.class);
+
+        when(owfsConnection.read(any())).thenThrow(new OwfsException("error", 1));
+
+        OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(BASEPATH);
+        oneWireDevice.readBaseParameter(owfsConnection);
+    }
+
     @Test
     public void readSensorValuesWithLimitedRateToFast() throws Exception {
-        OneWireDevice oneWireDevice = new OneWireDevice(BASEPATH);
+        OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(BASEPATH);
         sensorValuesRead = false;
 
         boolean executed = oneWireDevice.readSensorValuesWithLimitedRate(() -> {
@@ -76,7 +89,7 @@ public class OneWireDeviceTests {
 
     @Test
     public void readSensorValuesWithLimitedRate() throws Exception {
-        OneWireDevice oneWireDevice = new OneWireDevice(BASEPATH);
+        OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(BASEPATH);
         sensorValuesRead = false;
 
         boolean executed = oneWireDevice.readSensorValuesWithLimitedRate(() -> {
@@ -85,7 +98,7 @@ public class OneWireDeviceTests {
         assertThat(executed).isTrue();
         assertThat(sensorValuesRead).isTrue();
 
-        Thread.sleep(OneWireDevice.MINIMAL_READ_SENSOR_VALUES_INTERVAL);
+        Thread.sleep(OneWireUniversalDevice.MINIMAL_READ_SENSOR_VALUES_INTERVAL);
         executed = oneWireDevice.readSensorValuesWithLimitedRate(() -> {
             sensorValuesRead = false;
         });
@@ -97,19 +110,19 @@ public class OneWireDeviceTests {
     public void testToString() throws Exception {
         OwfsConnection owfsConnection = mock(OwfsConnection.class);
 
-        when(owfsConnection.read(BASEPATH + OneWireDevice.PATH_ADDRESS)).thenReturn("1DAA5D0B000000BD");
-        when(owfsConnection.read(BASEPATH + OneWireDevice.PATH_CRC8)).thenReturn("BD");
-        when(owfsConnection.read(BASEPATH + OneWireDevice.PATH_FAMILY)).thenReturn("1D");
-        when(owfsConnection.read(BASEPATH + OneWireDevice.PATH_ID)).thenReturn("AA5D0B000000");
-        when(owfsConnection.read(BASEPATH + OneWireDevice.PATH_LOCATOR)).thenReturn("FF08FFFFFFFFFFFF");
-        when(owfsConnection.read(BASEPATH + OneWireDevice.PATH_PRESENT)).thenReturn("1");
-        when(owfsConnection.read(BASEPATH + OneWireDevice.PATH_TYPE)).thenReturn("DS2423");
+        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_ADDRESS)).thenReturn("1DAA5D0B000000BD");
+        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_CRC8)).thenReturn("BD");
+        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_FAMILY)).thenReturn("1D");
+        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_ID)).thenReturn("AA5D0B000000");
+        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_LOCATOR)).thenReturn("FF08FFFFFFFFFFFF");
+        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_PRESENT)).thenReturn("1");
+        when(owfsConnection.read(BASEPATH + OneWireUniversalDevice.PATH_TYPE)).thenReturn("DS2423");
 
-        OneWireDevice oneWireDevice = new OneWireDevice(BASEPATH);
+        OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(BASEPATH);
         oneWireDevice.readBaseParameter(owfsConnection);
 
         String toString = oneWireDevice.toString();
         assertThat(toString).isEqualTo(
-                "OneWireDevice{basePath='/1D.AA5D0B000000', address='1DAA5D0B000000BD', crc8='BD', family='1D', id='AA5D0B000000', locator='FF08FFFFFFFFFFFF', present='1', type='DS2423'}");
+                "OneWireUniversalDevice{basePath='/1D.AA5D0B000000', address='1DAA5D0B000000BD', crc8='BD', family='1D', id='AA5D0B000000', locator='FF08FFFFFFFFFFFF', present='1', type='DS2423'}");
     }
 }

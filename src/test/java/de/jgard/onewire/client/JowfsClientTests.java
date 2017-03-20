@@ -58,7 +58,8 @@ public class JowfsClientTests {
     public void testListDirectory() throws Exception {
         OwfsConnection owfsConnection = getOwfsConnection();
 
-        System.out.println( owfsConnection.read("/81.665627000000/type") );
+        System.out.println( owfsConnection.read("/1D.AA5D0B000000/address") );
+        System.out.println( owfsConnection.read("/1D.AA5D0B000000/crc8") );
         listDir(owfsConnection, "/");
         owfsConnection.disconnect();
     }
