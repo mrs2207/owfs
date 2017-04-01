@@ -26,15 +26,14 @@ import org.owfs.jowfsclient.OwfsException;
 import java.io.IOException;
 
 public class OneWireServer {
-    private final String hostname;
-    private final int portNumber;
     private final OwfsConnection owfsConnection;
 
     public OneWireServer(String hostname, int portNumber) {
-        this.hostname = hostname;
-        this.portNumber = portNumber;
+        this.owfsConnection = createOwfsConnection(hostname,portNumber);
+    }
 
-        this.owfsConnection = createOwfsConnection();
+    OneWireServer(OwfsConnection owfsConnection) {
+        this.owfsConnection = owfsConnection;
     }
 
     public String read(String path) throws OneWireException {
@@ -45,15 +44,7 @@ public class OneWireServer {
         }
     }
 
-    @Override
-    public String toString() {
-        return "OneWireServer{" +
-                "hostname='" + hostname + '\'' +
-                ", portNumber=" + portNumber +
-                '}';
-    }
-
-    private OwfsConnection createOwfsConnection() {
+    private OwfsConnection createOwfsConnection(String hostname, int portNumber) {
         OwfsConnectionFactory owfsConnectorFactory = new OwfsConnectionFactory(hostname, portNumber);
 
         return owfsConnectorFactory.createNewConnection();

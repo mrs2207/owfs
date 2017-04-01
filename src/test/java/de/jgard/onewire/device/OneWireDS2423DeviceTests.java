@@ -21,7 +21,6 @@ package de.jgard.onewire.device;
 import de.jgard.onewire.OneWireException;
 import org.junit.Before;
 import org.junit.Test;
-import org.owfs.jowfsclient.OwfsException;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
