@@ -18,6 +18,8 @@
 
 package de.jgard.onewire.util;
 
+import java.sql.Timestamp;
+
 public class LimitedRateExecutor {
     private final long minimalExecutionInterval;
     private long lastExecutionTime;
@@ -34,6 +36,10 @@ public class LimitedRateExecutor {
         }
 
         return false;
+    }
+
+    public Timestamp getLastExecutionTime() {
+        return new Timestamp(lastExecutionTime);
     }
 
     private void execute(Runnable run) {

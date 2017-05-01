@@ -20,5 +20,10 @@ package de.jgard.onewire.device;
 
 public interface BiCounterDevice extends OneWireSensorDevice {
     long getCounterA();
+
     long getCounterB();
+
+    String getNameForCounterA();
+
+    String getNameForCounterB();
 }

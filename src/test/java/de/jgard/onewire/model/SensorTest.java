@@ -19,9 +19,9 @@
 package de.jgard.onewire.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Before;
 import org.junit.Test;
-
 
 public class SensorTest {
     private Sensor sensor;
@@ -67,9 +67,10 @@ public class SensorTest {
     }
 
     @Test
-    public void getSetId() throws Exception {
-        sensor.setId(Long.valueOf(42L));
+    public void getSetServer() throws Exception {
+        Server server = new Server();
 
-        assertThat(sensor.getId()).isEqualTo(42L);
+        sensor.setServer(server);
+        assertThat(sensor.getServer()).isEqualTo(server);
     }
 }

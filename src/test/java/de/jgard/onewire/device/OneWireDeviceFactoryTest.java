@@ -18,14 +18,15 @@
 
 package de.jgard.onewire.device;
 
-import de.jgard.onewire.OneWireException;
-import org.junit.Before;
-import org.junit.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import de.jgard.onewire.OneWireException;
 
 public class OneWireDeviceFactoryTest {
     private final static String BASE_PATH = "/1D.AA5D0B000000";

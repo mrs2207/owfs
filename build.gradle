@@ -71,7 +71,6 @@ generateSchema {
     format = true
     vendor = "hibernate"
     packageToScan = ["de.jgard.onewire.model"]
-    outputDirectory = new File("${projectDir}/src/main/scripts/sql")
 
     targets {
         schemaMySQL {
@@ -95,6 +94,11 @@ generateSchema {
     }
 }
 
+tasks.generateSchema.doLast {
+    (new File("${projectDir}/src/main/scripts/sql/create_schema_mysql.sql")).text = file("${buildDir}/generated-schema/create_schema_mysql.sql").getText() + file("${projectDir}/src/main/scripts/sql/fixsequence_mysql.sql").getText()
+    (new File("${projectDir}/src/main/scripts/sql/create_schema_h2.sql")).text = file("${buildDir}/generated-schema/create_schema_h2.sql").getText() + file("${projectDir}/src/main/scripts/sql/fixsequence_h2.sql").getText()
+}
+
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('org.springframework.boot:spring-boot-starter-web')
@@ -107,5 +111,5 @@ dependencies {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.4.1'
+    gradleVersion = '3.5'
 }

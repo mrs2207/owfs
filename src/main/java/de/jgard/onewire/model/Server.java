@@ -18,51 +18,47 @@
 
 package de.jgard.onewire.model;
 
-import java.sql.Timestamp;
-
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
 @Cacheable
-public class SensorValue extends AbstractPersistable<Long> {
+public class Server extends AbstractPersistable<Long> {
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private Sensor sensor;
-    @NotNull
-    @Column(nullable = false)
-    private long reading;
+    @Column(unique = true, length = 64, nullable = false)
+    private String name;
     @NotNull
     @Column(nullable = false)
-    private Timestamp timeOfMeasurement;
+    private String hostname;
+    @NotNull
+    @Column(nullable = false)
+    private int portNumber;
 
-    public long getReading() {
-        return reading;
+    public String getName() {
+        return name;
     }
 
-    public void setReading(long reading) {
-        this.reading = reading;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Timestamp getTimeOfMeasurement() {
-        return timeOfMeasurement;
+    public String getHostname() {
+        return hostname;
     }
 
-    public void setTimeOfMeasurement(Timestamp timeOfMeasurement) {
-        this.timeOfMeasurement = timeOfMeasurement;
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
     }
 
-    public Sensor getSensor() {
-        return sensor;
+    public int getPortNumber() {
+        return portNumber;
     }
 
-    public void setSensor(Sensor sensor) {
-        this.sensor = sensor;
+    public void setPortNumber(int portNumber) {
+        this.portNumber = portNumber;
     }
 }

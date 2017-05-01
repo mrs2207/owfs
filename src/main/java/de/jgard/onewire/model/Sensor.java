@@ -21,16 +21,17 @@ package de.jgard.onewire.model;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
+
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
 @Cacheable
-public class Sensor {
-    @Id
-    private Long id;
+public class Sensor extends AbstractPersistable<Long> {
     @NotNull
-    @Column(unique = true,length = 64)
+    @Column(unique = true, length = 64, nullable = false)
     private String name;
     @Column(length = 32)
     private String oneWireAddress;
@@ -40,6 +41,9 @@ public class Sensor {
     private String oneWireType;
     @Column(length = 32)
     private String oneWireSensorName;
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    private Server server;
 
     public String getName() {
         return name;
@@ -81,11 +85,11 @@ public class Sensor {
         this.oneWireSensorName = oneWireSensorName;
     }
 
-    public Long getId() {
-        return id;
+    public Server getServer() {
+        return server;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setServer(Server server) {
+        this.server = server;
     }
 }

@@ -18,12 +18,27 @@
 
 package de.jgard.onewire;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import de.jgard.onewire.service.PersistSensorValues;
+import de.jgard.onewire.service.SensorReaderRegistry;
+
 @SpringBootApplication
-public class OwfsApplication {
+public class OwfsApplication implements CommandLineRunner {
+    @Autowired
+    private PersistSensorValues persistSensorValues;
+    @Autowired
+    private SensorReaderRegistry sensorReaderRegistry;
+
     public static void main(String[] args) {
         SpringApplication.run(OwfsApplication.class, args);
+    }
+
+    public void run(String... args) throws Exception {
+        sensorReaderRegistry.buildSensorReaderRegistry();
+        persistSensorValues.readAndSaveSensorValues(sensorReaderRegistry);
     }
 }

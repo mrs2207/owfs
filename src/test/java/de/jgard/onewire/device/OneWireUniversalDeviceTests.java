@@ -18,16 +18,15 @@
 
 package de.jgard.onewire.device;
 
-import de.jgard.onewire.OneWireException;
-import org.junit.Test;
-import org.owfs.jowfsclient.OwfsConnection;
-import org.owfs.jowfsclient.OwfsException;
-import org.springframework.boot.test.context.SpringBootTest;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import org.junit.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import de.jgard.onewire.OneWireException;
 
 @SpringBootTest
 public class OneWireUniversalDeviceTests {
@@ -47,8 +46,8 @@ public class OneWireUniversalDeviceTests {
         when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_PRESENT)).thenReturn("1");
         when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_TYPE)).thenReturn("DS2423");
 
-        OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(BASEPATH);
-        oneWireDevice.readBaseParameter(oneWireServer);
+        OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(BASEPATH, oneWireServer);
+        oneWireDevice.readBaseParameter();
 
         assertThat(oneWireDevice.getAddress()).isEqualTo("1DAA5D0B000000BD");
         assertThat(oneWireDevice.getCrc8()).isEqualTo("BD");
@@ -65,13 +64,14 @@ public class OneWireUniversalDeviceTests {
 
         when(oneWireServer.read(any())).thenThrow(new OneWireException("error"));
 
-        OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(BASEPATH);
-        oneWireDevice.readBaseParameter(oneWireServer);
+        OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(BASEPATH, oneWireServer);
+        oneWireDevice.readBaseParameter();
     }
 
     @Test
     public void readSensorValuesWithLimitedRateToFast() throws Exception {
-        OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(BASEPATH);
+        OneWireServer oneWireServer = mock(OneWireServer.class);
+        OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(BASEPATH, oneWireServer);
         sensorValuesRead = false;
 
         boolean executed = oneWireDevice.readSensorValuesWithLimitedRate(() -> {
@@ -89,7 +89,8 @@ public class OneWireUniversalDeviceTests {
 
     @Test
     public void readSensorValuesWithLimitedRate() throws Exception {
-        OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(BASEPATH);
+        OneWireServer oneWireServer = mock(OneWireServer.class);
+        OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(BASEPATH, oneWireServer);
         sensorValuesRead = false;
 
         boolean executed = oneWireDevice.readSensorValuesWithLimitedRate(() -> {
@@ -118,8 +119,8 @@ public class OneWireUniversalDeviceTests {
         when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_PRESENT)).thenReturn("1");
         when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_TYPE)).thenReturn("DS2423");
 
-        OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(BASEPATH);
-        oneWireDevice.readBaseParameter(oneWireServer);
+        OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(BASEPATH, oneWireServer);
+        oneWireDevice.readBaseParameter();
 
         String toString = oneWireDevice.toString();
         assertThat(toString).isEqualTo(

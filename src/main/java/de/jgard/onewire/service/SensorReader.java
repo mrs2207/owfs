@@ -16,14 +16,10 @@
  *
  */
 
-package de.jgard.onewire.device;
+package de.jgard.onewire.service;
 
-import java.sql.Timestamp;
+import de.jgard.onewire.model.SensorValue;
 
-public interface OneWireSensorDevice {
-    boolean readSensorValues();
-
-    boolean readUncachedSensorValues();
-
-    Timestamp getTimeOfMeasurement();
+public interface SensorReader {
+    SensorValue readSensorValue();
 }

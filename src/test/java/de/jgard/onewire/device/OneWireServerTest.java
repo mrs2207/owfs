@@ -18,18 +18,32 @@
 
 package de.jgard.onewire.device;
 
-import org.junit.Test;
-import org.owfs.jowfsclient.OwfsConnection;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+
+import org.junit.Test;
+import org.owfs.jowfsclient.OwfsConnection;
+
+import de.jgard.onewire.OneWireException;
 
 public class OneWireServerTest {
     @Test
     public void read() throws Exception {
         OwfsConnection owfsConnection = mock(OwfsConnection.class);
         when(owfsConnection.read("/test")).thenReturn("read");
+
+        OneWireServer oneWireServer = new OneWireServer(owfsConnection);
+
+        assertThat(oneWireServer.read("/test")).isEqualTo("read");
+    }
+
+    @Test(expected = OneWireException.class)
+    public void readWithIOException() throws Exception {
+        OwfsConnection owfsConnection = mock(OwfsConnection.class);
+        when(owfsConnection.read("/test")).thenThrow(IOException.class);
 
         OneWireServer oneWireServer = new OneWireServer(owfsConnection);
 

@@ -18,18 +18,19 @@
 
 package de.jgard.onewire.device;
 
-import de.jgard.onewire.OneWireException;
+import java.io.IOException;
+
 import org.owfs.jowfsclient.OwfsConnection;
 import org.owfs.jowfsclient.OwfsConnectionFactory;
 import org.owfs.jowfsclient.OwfsException;
 
-import java.io.IOException;
+import de.jgard.onewire.OneWireException;
 
 public class OneWireServer {
     private final OwfsConnection owfsConnection;
 
     public OneWireServer(String hostname, int portNumber) {
-        this.owfsConnection = createOwfsConnection(hostname,portNumber);
+        this.owfsConnection = createOwfsConnection(hostname, portNumber);
     }
 
     OneWireServer(OwfsConnection owfsConnection) {

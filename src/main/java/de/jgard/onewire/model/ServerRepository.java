@@ -16,14 +16,9 @@
  *
  */
 
-package de.jgard.onewire.device;
+package de.jgard.onewire.model;
 
-import java.sql.Timestamp;
+import org.springframework.data.repository.CrudRepository;
 
-public interface OneWireSensorDevice {
-    boolean readSensorValues();
-
-    boolean readUncachedSensorValues();
-
-    Timestamp getTimeOfMeasurement();
+public interface ServerRepository extends CrudRepository<Server, Long> {
 }

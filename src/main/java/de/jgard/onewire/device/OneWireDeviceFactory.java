@@ -18,8 +18,9 @@
 
 package de.jgard.onewire.device;
 
-import de.jgard.onewire.OneWireException;
 import org.springframework.stereotype.Service;
+
+import de.jgard.onewire.OneWireException;
 
 @Service
 public class OneWireDeviceFactory {
@@ -35,14 +36,14 @@ public class OneWireDeviceFactory {
     }
 
     private OneWireUniversalDevice getOneWireUniversalDevice(OneWireServer oneWireServer, String basePath) {
-        OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(basePath);
-        oneWireDevice.readBaseParameter(oneWireServer);
+        OneWireUniversalDevice oneWireDevice = new OneWireUniversalDevice(basePath, oneWireServer);
+        oneWireDevice.readBaseParameter();
         return oneWireDevice;
     }
 
     private BiCounterDevice getOneWireDS2423Device(OneWireServer oneWireServer, String basePath) {
-        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(basePath);
-        oneWireDS2423Device.readBaseParameter(oneWireServer);
+        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(basePath, oneWireServer);
+        oneWireDS2423Device.readBaseParameter();
 
         return oneWireDS2423Device;
     }

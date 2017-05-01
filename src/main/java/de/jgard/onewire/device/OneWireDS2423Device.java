@@ -21,25 +21,27 @@ package de.jgard.onewire.device;
 import de.jgard.onewire.OneWireException;
 
 public class OneWireDS2423Device extends OneWireUniversalDevice implements BiCounterDevice {
-    protected static final String PATH_COUNTER_A = "/counters.A";
-    protected static final String PATH_COUNTER_B = "/counters.B";
     static final String ONE_WIRE_FAMILY = "1D";
     static final String ONE_WIRE_TYPE = "DS2423";
+    private static final String NAME_COUNTER_A = "counters.A";
+    protected static final String PATH_COUNTER_A = "/" + NAME_COUNTER_A;
+    private static final String NAME_COUNTER_B = "counters.B";
+    protected static final String PATH_COUNTER_B = "/" + NAME_COUNTER_B;
     private long counterA;
     private long counterB;
 
-    OneWireDS2423Device(String basePath) {
-        super(basePath);
+    OneWireDS2423Device(String basePath, OneWireServer oneWireServer) {
+        super(basePath, oneWireServer);
     }
 
     @Override
-    public boolean readSensorValues(OneWireServer oneWireServer) throws OneWireException {
+    public boolean readSensorValues() throws OneWireException {
         return readSensorValuesWithLimitedRate(
                 () -> readSensorValues(oneWireServer, getBasePath()));
     }
 
     @Override
-    public boolean readUncachedSensorValues(OneWireServer oneWireServer) throws OneWireException {
+    public boolean readUncachedSensorValues() throws OneWireException {
         return readSensorValuesWithLimitedRate(
                 () -> readSensorValues(oneWireServer, PATH_UNCACHED + getBasePath()));
     }
@@ -54,18 +56,28 @@ public class OneWireDS2423Device extends OneWireUniversalDevice implements BiCou
         return counterB;
     }
 
+    @Override
+    public String getNameForCounterA() {
+        return NAME_COUNTER_A;
+    }
+
+    @Override
+    public String getNameForCounterB() {
+        return NAME_COUNTER_B;
+    }
+
     private void readSensorValues(OneWireServer oneWireServer, String path) throws OneWireException {
         try {
-            counterA = Long.parseLong(oneWireServer.read((path + PATH_COUNTER_A).trim()));
-            counterB = Long.parseLong(oneWireServer.read((path + PATH_COUNTER_B).trim()));
+            counterA = Long.parseLong(oneWireServer.read((path + PATH_COUNTER_A)).trim());
+            counterB = Long.parseLong(oneWireServer.read((path + PATH_COUNTER_B)).trim());
         } catch (NumberFormatException e) {
             throw new OneWireException("Sensor values doesn't have expected format (long).", e);
         }
     }
 
     @Override
-    void readBaseParameter(OneWireServer oneWireServer) throws OneWireException {
-        super.readBaseParameter(oneWireServer);
+    void readBaseParameter() throws OneWireException {
+        super.readBaseParameter();
 
         if (!ONE_WIRE_FAMILY.equals(getFamily()))
             throw new OneWireException(

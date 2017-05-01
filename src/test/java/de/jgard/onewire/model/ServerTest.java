@@ -16,26 +16,39 @@
  *
  */
 
-package de.jgard.onewire;
+package de.jgard.onewire.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.Before;
 import org.junit.Test;
 
-public class OneWireExceptionTest {
-    @Test
-    public void creationWithMessage() throws Exception {
-        OneWireException oneWireException = new OneWireException("Test");
+public class ServerTest {
+    private Server server;
 
-        assertThat(oneWireException.getMessage()).isEqualTo("Test");
+    @Before
+    public void setup() {
+        server = new Server();
     }
 
     @Test
-    public void creationWithMessageAndException() throws Exception {
-        Exception exception = new IllegalArgumentException();
-        OneWireException oneWireException = new OneWireException("Test", exception);
+    public void getSetName() throws Exception {
+        server.setName("name");
 
-        assertThat(oneWireException.getMessage()).isEqualTo("Test");
-        assertThat(oneWireException.getCause()).isEqualTo(exception);
+        assertThat(server.getName()).isEqualTo("name");
+    }
+
+    @Test
+    public void getSetHostname() throws Exception {
+        server.setHostname("hostname");
+
+        assertThat(server.getHostname()).isEqualTo("hostname");
+    }
+
+    @Test
+    public void getSetPortNunmber() throws Exception {
+        server.setPortNumber(4304);
+
+        assertThat(server.getPortNumber()).isEqualTo(4304);
     }
 }

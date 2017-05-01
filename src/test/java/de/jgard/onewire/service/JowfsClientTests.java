@@ -16,17 +16,17 @@
  *
  */
 
-package de.jgard.onewire.client;
+package de.jgard.onewire.service;
+
+import java.io.IOException;
+import java.net.ConnectException;
+import java.util.List;
 
 import org.junit.Test;
 import org.owfs.jowfsclient.OwfsConnection;
 import org.owfs.jowfsclient.OwfsConnectionFactory;
 import org.owfs.jowfsclient.OwfsException;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.io.IOException;
-import java.net.ConnectException;
-import java.util.List;
 
 @SpringBootTest
 public class JowfsClientTests {
@@ -39,7 +39,7 @@ public class JowfsClientTests {
 
     @Test(expected = ConnectException.class)
     public void testFailedConnectToOwfsServer() throws Exception {
-        OwfsConnectionFactory owfsConnectorFactory = new OwfsConnectionFactory("jupiter", 4303);
+        OwfsConnectionFactory owfsConnectorFactory = new OwfsConnectionFactory("localhost", 4303);
 
         OwfsConnection owfsConnection = owfsConnectorFactory.createNewConnection();
         owfsConnection.exists("/");
@@ -58,8 +58,8 @@ public class JowfsClientTests {
     public void testListDirectory() throws Exception {
         OwfsConnection owfsConnection = getOwfsConnection();
 
-        System.out.println( owfsConnection.read("/1D.AA5D0B000000/address") );
-        System.out.println( owfsConnection.read("/1D.AA5D0B000000/crc8") );
+        System.out.println(owfsConnection.read("/1D.AA5D0B000000/address"));
+        System.out.println(owfsConnection.read("/1D.AA5D0B000000/crc8"));
         listDir(owfsConnection, "/");
         owfsConnection.disconnect();
     }
@@ -72,7 +72,7 @@ public class JowfsClientTests {
     }
 
     private OwfsConnection getOwfsConnection() {
-        OwfsConnectionFactory owfsConnectorFactory = new OwfsConnectionFactory("jupiter", 4304);
+        OwfsConnectionFactory owfsConnectorFactory = new OwfsConnectionFactory("localhost", 4304);
 
         return owfsConnectorFactory.createNewConnection();
     }

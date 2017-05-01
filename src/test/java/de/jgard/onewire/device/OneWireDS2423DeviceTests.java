@@ -18,14 +18,15 @@
 
 package de.jgard.onewire.device;
 
-import de.jgard.onewire.OneWireException;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import de.jgard.onewire.OneWireException;
 
 @SpringBootTest
 public class OneWireDS2423DeviceTests {
@@ -42,8 +43,8 @@ public class OneWireDS2423DeviceTests {
         when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_FAMILY)).thenReturn("1D");
         when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_TYPE)).thenReturn("DS2423");
 
-        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH);
-        oneWireDS2423Device.readBaseParameter(oneWireServer);
+        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH, oneWireServer);
+        oneWireDS2423Device.readBaseParameter();
 
         assertThat(oneWireDS2423Device.getFamily()).isEqualTo("1D");
         assertThat(oneWireDS2423Device.getType()).isEqualTo("DS2423");
@@ -54,8 +55,8 @@ public class OneWireDS2423DeviceTests {
         when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_FAMILY)).thenReturn("1F");
         when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_TYPE)).thenReturn("DS2423");
 
-        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH);
-        oneWireDS2423Device.readBaseParameter(oneWireServer);
+        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH, oneWireServer);
+        oneWireDS2423Device.readBaseParameter();
     }
 
     @Test(expected = OneWireException.class)
@@ -63,8 +64,8 @@ public class OneWireDS2423DeviceTests {
         when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_FAMILY)).thenReturn("1D");
         when(oneWireServer.read(BASEPATH + OneWireUniversalDevice.PATH_TYPE)).thenReturn("DS2422");
 
-        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH);
-        oneWireDS2423Device.readBaseParameter(oneWireServer);
+        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH, oneWireServer);
+        oneWireDS2423Device.readBaseParameter();
     }
 
     @Test
@@ -72,8 +73,8 @@ public class OneWireDS2423DeviceTests {
         when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A)).thenReturn("42");
         when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_B)).thenReturn("21");
 
-        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH);
-        boolean valuesRead = oneWireDS2423Device.readSensorValues(oneWireServer);
+        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH, oneWireServer);
+        boolean valuesRead = oneWireDS2423Device.readSensorValues();
 
         assertThat(valuesRead).isTrue();
         assertThat(oneWireDS2423Device.getCounterA()).isEqualTo(42L);
@@ -85,8 +86,8 @@ public class OneWireDS2423DeviceTests {
         when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A)).thenReturn("42x");
         when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_B)).thenReturn("21x");
 
-        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH);
-        oneWireDS2423Device.readSensorValues(oneWireServer);
+        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH, oneWireServer);
+        oneWireDS2423Device.readSensorValues();
     }
 
     @Test(expected = OneWireException.class)
@@ -94,8 +95,8 @@ public class OneWireDS2423DeviceTests {
         when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A))
                 .thenThrow(new OneWireException("error"));
 
-        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH);
-        oneWireDS2423Device.readSensorValues(oneWireServer);
+        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH, oneWireServer);
+        oneWireDS2423Device.readSensorValues();
     }
 
     @Test
@@ -103,8 +104,8 @@ public class OneWireDS2423DeviceTests {
         when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A)).thenReturn("42");
         when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_B)).thenReturn("21");
 
-        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH);
-        boolean valuesRead = oneWireDS2423Device.readSensorValues(oneWireServer);
+        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH, oneWireServer);
+        boolean valuesRead = oneWireDS2423Device.readSensorValues();
 
         assertThat(valuesRead).isTrue();
         assertThat(oneWireDS2423Device.getCounterA()).isEqualTo(42L);
@@ -113,7 +114,7 @@ public class OneWireDS2423DeviceTests {
         when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A)).thenReturn("43");
         when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_B)).thenReturn("22");
 
-        valuesRead = oneWireDS2423Device.readSensorValues(oneWireServer);
+        valuesRead = oneWireDS2423Device.readSensorValues();
 
         assertThat(valuesRead).isFalse();
         assertThat(oneWireDS2423Device.getCounterA()).isEqualTo(42L);
@@ -125,8 +126,8 @@ public class OneWireDS2423DeviceTests {
         when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_A)).thenReturn("42");
         when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_B)).thenReturn("21");
 
-        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH);
-        boolean valuesRead = oneWireDS2423Device.readSensorValues(oneWireServer);
+        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH, oneWireServer);
+        boolean valuesRead = oneWireDS2423Device.readSensorValues();
 
         assertThat(valuesRead).isTrue();
         assertThat(oneWireDS2423Device.getCounterA()).isEqualTo(42L);
@@ -136,7 +137,7 @@ public class OneWireDS2423DeviceTests {
         when(oneWireServer.read(BASEPATH + OneWireDS2423Device.PATH_COUNTER_B)).thenReturn("22");
 
         Thread.sleep(OneWireUniversalDevice.MINIMAL_READ_SENSOR_VALUES_INTERVAL);
-        valuesRead = oneWireDS2423Device.readSensorValues(oneWireServer);
+        valuesRead = oneWireDS2423Device.readSensorValues();
 
         assertThat(valuesRead).isTrue();
         assertThat(oneWireDS2423Device.getCounterA()).isEqualTo(43L);
@@ -150,8 +151,8 @@ public class OneWireDS2423DeviceTests {
         when(oneWireServer.read(OneWireUniversalDevice.PATH_UNCACHED + BASEPATH + OneWireDS2423Device.PATH_COUNTER_B))
                 .thenReturn("21");
 
-        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH);
-        boolean valuesRead = oneWireDS2423Device.readUncachedSensorValues(oneWireServer);
+        OneWireDS2423Device oneWireDS2423Device = new OneWireDS2423Device(BASEPATH, oneWireServer);
+        boolean valuesRead = oneWireDS2423Device.readUncachedSensorValues();
 
         assertThat(valuesRead).isTrue();
         assertThat(oneWireDS2423Device.getCounterA()).isEqualTo(42L);

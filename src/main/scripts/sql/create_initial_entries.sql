@@ -13,7 +13,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --
-insert into Sensor (id,name,oneWireAddress,oneWireFamily,oneWireType,oneWireSensorName)
-    values (1, 'PowerMain', '1D.AA5D0B000000', '1D', 'DS2423', 'counters.A');
-insert into Sensor (id,name,oneWireAddress,oneWireFamily,oneWireType,oneWireSensorName)
-    values (2, 'PowerGarden', '1D.AA5D0B000000', '1D', 'DS2423', 'counters.B');
+insert into Server (id,name,hostname,portNumber)
+    values (1, "OneWire", "localhost", 4304);
+insert into Sensor (id,name,oneWireAddress,oneWireFamily,oneWireType,oneWireSensorName,server_id)
+    values (1, 'PowerMain', '1D.AA5D0B000000', '1D', 'DS2423', 'counters.A',1);
+insert into Sensor (id,name,oneWireAddress,oneWireFamily,oneWireType,oneWireSensorName,server_id)
+    values (2, 'PowerGarden', '1D.AA5D0B000000', '1D', 'DS2423', 'counters.B',1);

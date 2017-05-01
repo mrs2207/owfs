@@ -18,7 +18,7 @@
 
 package de.jgard.onewire.model;
 
-import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.CrudRepository;
 
-public interface SensorRepository extends Repository<Sensor,Long> {
+public interface SensorRepository extends CrudRepository<Sensor, Long> {
 }

@@ -18,12 +18,12 @@
 
 package de.jgard.onewire.model;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.sql.Timestamp;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Before;
+import org.junit.Test;
 
 public class SensorValueTest {
     private SensorValue sensorValue;
@@ -46,5 +46,13 @@ public class SensorValueTest {
         sensorValue.setTimeOfMeasurement(currentTime);
 
         assertThat(sensorValue.getTimeOfMeasurement()).isEqualTo(currentTime);
+    }
+
+    @Test
+    public void getSetSensor() throws Exception {
+        Sensor sensor = new Sensor();
+
+        sensorValue.setSensor(sensor);
+        assertThat(sensorValue.getSensor()).isEqualTo(sensor);
     }
 }

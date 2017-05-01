@@ -15,6 +15,6 @@
 drop database if exists power;
 create database power character set = utf8;
 drop user power@'%';
-create user power@'%' identified by '8fBPezm*ci';
+create user power@'%' identified by 'WGVgTjMQ7';
 grant all privileges on `power` . * to  'power'@'%' with grant option;
 grant select on `mysql`.`proc` TO 'power'@'%';
